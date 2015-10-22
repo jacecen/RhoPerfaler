@@ -1,0 +1,160 @@
+<div data-role="page" id="parametros" data-theme="b">
+  <style>
+    .ui-icon-leftarrowicon:after {
+      background-image: url("/public/images/left_16.png");
+      background-size: 18px 18px
+    }
+    .ui-icon-tickicon:after {
+      background-image: url("/public/images/tick_16.png");
+      background-size: 18px 18px
+    }
+  </style>
+  <script type="text/javascript">
+    var valid = false;
+    var sdCurrentDialogClosed = false;
+    var passwordValida = false;
+    function waitSimpleDialogClose(callback){
+      var condition = function(){return sdCurrentDialogClosed};
+      if (condition() == false) {
+        setTimeout(function(){waitSimpleDialogClose(callback)}, 1000)
+      } else {
+        $(document).trigger('simpledialog', {'method':'close'});
+        callback()
+      }
+    };
+    function pidePasswd(newPasswd) {
+      var passwd = '';
+      valid = false;
+      sdCurrentDialogClosed = false;
+      $('#parametros').simpledialog2({
+        mode: 'button',
+        headerText: 'Par&aacute;metros',
+        headerClose: false,
+        buttonPrompt: '&iquest;Contrase&ntilde;a?',
+        buttonInput: true,
+        buttonPassword: true,
+        forceInput: true,
+        buttons : {
+          'Aceptar': {
+            click: function () { 
+              passwd = $.mobile.sdLastInput;
+              valid = true
+              if (passwd != newPasswd) {
+                alert("Password no v&aacute;lida");
+                valid=false
+              }
+            }
+          },
+          'Cancelar': {
+            click: function () {
+              valid = false
+            },
+            icon: "delete",
+            theme: "c"
+          }
+        },
+        zindex: 1000,
+        callbackClose: function() {
+          sdCurrentDialogClosed = true
+        }
+      })
+    };
+    function passwdOk() {
+      if (!valid) {
+        $('#atras').click()
+      };
+      passwordValida=true
+    };
+    function checkPasswd(newPasswd) {
+      pidePasswd(newPasswd);
+      waitSimpleDialogClose(function() {passwdOk()});
+    };
+    function pideConformidad() {
+      valid = false;
+      sdCurrentDialogClosed = false;
+      $('#confirmar').simpledialog2({
+        mode: 'button',
+        headerText: 'Par&aacute;metros',
+        headerClose: false,
+        buttonPrompt: '&iquest;Datos correctos?',
+        forceInput: true,
+        buttons : {
+          'Si': {
+            click: function () {
+              valid = true
+            }
+          },
+          'No': {
+            click: function () {
+              valid = false
+            },
+            icon: "delete",
+            theme: "c"
+          }
+        },
+        zindex: 2000,
+        callbackClose: function () {
+          sdCurrentDialogClosed = true
+        }
+      })
+    };
+    function datosOk(form) {
+      if (valid){
+        form.submit()
+      }
+    };
+    function confirmaDatos(form) {
+      pideConformidad();
+      waitSimpleDialogClose(function() {datosOk(form)});
+    };
+    $('#parametros').on('pageshow', function(){
+      if (('<%= @password %>' != '') && (!passwordValida)) {
+        checkPasswd('<%= @password %>')
+      }
+    })
+  </script>
+  <div data-role="header" data-position="inline">
+    <h1>Parametros</h1>
+    <a href="<%= url_for :action => :index %>" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-leftarrowicon" data-direction="reverse" id="atras">
+      Cancelar
+    </a>
+  </div>
+  <div data-role="content">
+    <form method="POST" action="<%= url_for(:action => :updateParametros) %>" id="form-parametros">
+      <div data-role="fieldcontain">
+        <label for="parametros-terminal">Terminal</label>
+        <select name="parametros-terminal" id="parametros-terminal" data-native-menu="false" data-theme="b" required data-inline="false">
+          <option value="" data-placeholder="true">C&oacute;digo de terminal</opcion>
+          <% Terminal.find(:all, :order => [:idEmpleado]).each do |terminal| %>
+            <option value="<%= terminal.idEmpleado %>"<%= " selected = 'selected'" if terminal.idEmpleado == @terminal.to_i %>><%= terminal.idEmpleado %></option>
+          <% end %>
+        </select>
+      </div>
+      <div data-role="fieldcontain">
+        <label for="parametros-usuario">Usuario</label>
+        <select name="parametros-usuario" id="parametros-usuario" data-native-menu="false" data-theme="b" required data-inline="false">
+          <option value="" data-placeholder="true">C&oacute;digo de usuario</opcion>
+          <% Agente.find(:all, :order => [:codAgente]).each do |agente| %>
+            <option value="<%= agente.codAgente %>"<%= " selected = 'selected'" if agente.codAgente == @usuario %>><%= agente.nombreCompleto %></option>
+          <% end %>
+        </select>
+      </div>
+      <div data-role="fieldcontain">
+        <label for="parametros-numOrden">N&ordm; de &uacute;ltima sanci&oacuten</label>
+        <input type="number" id="parametros-numOrden" name="parametros-numOrden" data-clear-btn="true" placeholder="N&uacute;mero de sanci&oacute;n" value="<%= @numOrden %>" integer="true" min="1" max="99999" />
+      </div>
+      <input type="submit" value="Confirmar" id="confirmar" data-icon="tickicon" data-iconpos="left"/>
+    </form>
+    <script>
+      $("#form-parametros").validate({
+        errorPlacement: function (error, element) {
+          error.appendTo(element.parent().parent().after());
+        },
+        submitHandler: function(form) {
+          var valid=false;
+          confirmaDatos(form);
+        }
+      });
+    </script>
+  </div>
+</div>

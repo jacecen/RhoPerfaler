@@ -1,0 +1,30 @@
+<div data-role="page" data-url="<%= Rho::Application.startURI %>" data-theme="b">
+  <style>
+    .ui-icon-comunicaicon:after {
+      background-image: url("/public/images/globe_16.png");
+      background-size: 18px 18px;
+    }
+  </style>
+  <div data-role="header" data-position="inline">
+    <h1>Zona Azul</h1>
+    <a href="<%= url_for :controller => :Settings, :action => :comunica %>" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-comunicaicon">
+      Comunica
+    </a>
+  </div>
+  <div data-role="content">
+    <ul data-role="listview">
+      <li>
+        <a href="<%= url_for(:controller => :Sancion, :action => :index) %>">
+          <img src="/public/images/zona_azul_64.png" style="margin:8px"/>
+          Sanciones
+        </a>
+      </li>
+      <li>
+        <a href="<%= url_for(:controller => :Utilidades, :action => :index) %>">
+          <img src="/public/images/gear_64.png" style="margin:8px"/>
+          Utilidades
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>

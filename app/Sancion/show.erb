@@ -1,0 +1,99 @@
+<div data-role="page" data-add-back-btn="false" data-theme="b">
+  <style>
+    .ui-icon-printicon:after {
+      background-image: url("/public/images/print_16.png");
+      background-size: 18px 18px;
+    }
+    .ui-icon-leftarrowicon:after {
+      background-image: url("/public/images/left_16.png");
+      background-size: 18px 18px;
+    }
+  </style>
+  <div data-role="header" data-position="inline">
+    <h1>Sanci&oacute;n N&ordm;: <%= @sancion.numOrden %></h1>
+    <a href="<%= url_for :action => :index %>" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-leftarrowicon" data-direction="reverse">
+      Atras
+    </a>
+    <a href="<%= url_for :action => :print, :id => @sancion.object %>" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-printicon">
+      Imprimir
+    </a>
+  </div>
+  <div data-role="content">
+    <ul data-role="listview">
+      <li>
+        <div class="itemLabel">
+          Fecha y hora:
+        </div>
+        <div class="itemValue" style="text-align: right; width: 50%">
+          <%= @sancion.fechaHora %>
+        </div>
+      </li>
+      <li>
+        <div class="itemLabel">
+          Matr&iacute;cula:
+        </div>
+        <div class="itemValue" style="text-align: right; width: 50%">
+          <%= @sancion.matricula %>
+        </div>
+      </li>
+      <li>
+        <div class="itemLabel">
+          Tipo de matr&iacute;cula:
+        </div>
+        <div class="itemValue" style="text-align: right; width: 50%">
+          <%= @sancion.nombreTipoMatricula %>
+        </div>
+      </li>
+      <li>
+        <div class="itemLabel">
+          Tipo de veh&iacute;culo:
+        </div>
+        <div class="itemValue" style="text-align: right; width: 50%">
+          <%= @sancion.nombreTipoVehiculo %>
+        </div>
+      </li>
+      <li>
+        <div class="itemLabel">
+          Marca:
+        </div>
+        <div class="itemValue" style="text-align: right; width: 50%">
+          <%= @sancion.nombreMarca %>
+        </div>
+      </li>
+      <li>
+        <div class="itemLabel">
+          Modelo:
+        </div>
+        <div class="itemValue" style="text-align: right; width: 50%">
+          <%= @sancion.modelo %>
+        </div>
+      </li>
+      <li>
+        <div class="itemLabel">
+          Color:
+        </div>
+        <div class="itemValue" style="text-align: right; width: 50%">
+          <%= @sancion.nombreColor %>
+        </div>
+      </li>
+      <li>
+        <div class="itemLabel">
+          Direcci&oacute;n:
+        </div>
+        <br/>
+        <div class="itemValue" style="white-space: normal; whidth: 100%">
+          <%= @sancion.direccion %>
+        </div>
+      </li>
+      <li>
+        <div class="itemLabel">
+          Tipo de sanci&oacute;n:
+        </div>
+        <br/>
+        <div class="itemValue" style="white-space: normal; whidth: 100%">
+          <%= @sancion.nombreTipoSancion %>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

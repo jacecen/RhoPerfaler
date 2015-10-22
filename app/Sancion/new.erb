@@ -1,0 +1,255 @@
+<div data-role="page" id="new" data-theme="b">
+  <style>
+    .ui-icon-leftarrowicon:after {
+      background-image: url("/public/images/left_16.png");
+      background-size: 18px 18px;
+    }
+  </style>
+  <script src="/public/jqm.autoComplete/jqm.autoComplete-1.5.2.js"></script>
+  <script type="text/javascript">
+    var marcaAct='';
+    var matriculaAct='';
+    var valid = false;
+    var sdCurrentDialogClosed = false;
+    function cambiaMarca(){
+      if (marcaAct!=$('#sancion-marca').val()){
+        var data=[];
+        $.ajax('<%= url_for(:action => :cargaModelos) %>',{
+          method: 'GET',
+          data: { marca: $('#sancion-marca').val()},
+          dataType: 'json',
+          async: false
+        }).done(function(dat){
+          data=dat
+        });
+        $('#sancion-modelo').autocomplete("update",{
+          source: data
+        });
+        marcaAct=$('#sancion-marca').val()
+        $('#sancion-modelo').textinput( "refresh" );
+      }
+    };
+    function waitSimpleDialogClose(callback){
+      var condition = function(){return sdCurrentDialogClosed};
+      if (condition() == false) {
+        setTimeout(function(){waitSimpleDialogClose(callback)}, 1000)
+      } else {
+        $(document).trigger('simpledialog', {'method':'close'});
+        callback()
+      }
+    };
+    function pideConformidad() {
+      valid = false;
+      sdCurrentDialogClosed = false;
+      $('#confirmar').simpledialog2({
+        mode: 'button',
+        headerText: 'Sanci&oacute;n <%= $sancion.numOrden %>',
+        headerClose: false,
+        buttonPrompt: '&iquest;Datos correctos?',
+        forceInput: true,
+        buttons : {
+          'Si': {
+            click: function () {
+              valid = true
+            }
+          },
+          'No': {
+            click: function () {
+              valid = false
+            },
+            icon: "delete",
+            theme: "c"
+          }
+        },
+        zindex: 2000,
+        callbackClose: function () {
+          sdCurrentDialogClosed = true
+        }
+      })
+    };
+    function submitOk(form) {
+      if (valid){
+        form.submit()
+      }
+    };
+    function confirmaDatos(form) {
+      pideConformidad();
+      waitSimpleDialogClose(function() {submitOk(form)});
+    };
+    function matriculaEspecial1() {
+      sdCurrentDialogClosed = false;
+      $('#sancion-matricula').simpledialog2({
+        mode: 'button',
+        headerText: $("#sancion-matricula").val().toUpperCase(),
+        headerClose: false,
+        forceInput: true,
+        buttonPrompt: 'Vehiculo autorizado',
+        buttons: {
+          'Ok': { 
+            click: function () {}
+          }
+        },
+        zindex: 2000,
+        callbackClose: function () {
+          sdCurrentDialogClosed = true
+        }
+      })
+    };
+    function matriculaEspecial2() {
+      matriculaAct='';
+      $('#sancion-matricula').val("");
+      $('#sancion-matricula').focus();
+    };
+    function matriculaEspecial() {
+      matriculaEspecial1();
+      waitSimpleDialogClose(function() {matriculaEspecial2()});
+    };
+    function vehiculoReincidente1(data) {
+      sdCurrentDialogClosed = false;
+      $('#sancion-matricula').simpledialog2({
+        mode: 'button',
+        headerText: $('#sancion-matricula').val().toUpperCase(),
+        headerClose: false,
+        forceInput: true,
+        buttonPrompt: 'Vehiculo reincidente\r\n'+data['numApariciones']+' veces\r\nUltima vez: '+data['ultimaSancion'],
+        buttons: {
+          'Ok': { 
+            click: function () {}
+          }
+        },
+        zindex: 2000,
+        callbackClose: function () {
+          matriculaAct=$('#sancion-matricula').val()
+          sdCurrentDialogClosed = true
+        }
+      })
+    };
+    function vehiculoReincidente(data) {
+      vehiculoReincidente1(data);
+      waitSimpleDialogClose(function(){});
+    };
+    $('#new').on('pageshow',function(){
+      $('.ui-select').css({'width':'100%', 'margin-left':'0px' });
+      $('#sancion-modelo').autocomplete({
+        source: [],
+        target: $('#sancion-modelo-sugerencias'),
+        matchFromStart: false,
+        forceFirstChoiceOnEnterKey : true,
+        minLength: 0,
+        link: 'target.html?term=',
+        callback: function(e) {
+          var $a = $(e.currentTarget);
+          $('#sancion-modelo').val($a.text());
+          $('#sancion-modelo').autocomplete('clear');
+        }
+      });
+      $('#sancion-matricula').on('blur', function(){
+        if (($('#sancion-matricula').val()!='') & ($('#sancion-matricula').val()!=matriculaAct)) {
+          $.ajax('<%= url_for(:action => :verificaMatricula) %>',{
+            method: 'GET',
+            data: { matricula: $('#sancion-matricula').val().toUpperCase()},
+            dataType: 'JSON',
+            async: false
+          }).done(function(data){
+            if (data['especial']){
+              matriculaEspecial()
+            } else if (data['reincidente']){
+              vehiculoReincidente(data)
+            };
+            matriculaAct=$('#sancion-matricula').val()
+          })
+        }
+      });
+      $('#sancion-marca').change(cambiaMarca());
+      $('#sancion-matricula').focus();
+    });
+  </script>
+  <div data-role="header" data-position="inline">
+    <h2>Sanci&oacute;n <%= $sancion.numOrden %></h2>
+    <a href="<%= url_for(:action => :index) %>" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-leftarrowicon" data-direction="reverse">
+      Cancelar
+    </a>
+  </div>
+  <div data-role="content">
+    <form method="POST" action="<%= url_for(:action => :create) %>" id="form-sancion">
+      <div>
+        <input type="text" id="sancion-matricula" name="sancion-matricula" data-clear-btn="true" data-mini="true" maxlenght="10" placeholder="Matr&iacute;cula" value="<%= $sancion.matricula %>" required minlenght="5" />
+      </div>
+      <div>
+        <select name="sancion-tipoMatricula" id="sancion-tipoMatricula" data-native-menu="false" data-theme="b" data-mini="true" required data-inline="false">
+          <option value="" data-placeholder="true">Tipo de matr&iacute;cula</opcion>
+          <option value="N"<%= " selected = 'selected'" if $sancion.tipoMatricula == 'N' %>>Normal</option>
+          <option value="E"<%= " selected = 'selected'" if $sancion.tipoMatricula == 'E' %>>Extranjera</option>
+          <option value="M"<%= " selected = 'selected'" if $sancion.tipoMatricula == 'M' %>>Mensual</option>
+          <option value="S"<%= " selected = 'selected'" if $sancion.tipoMatricula == 'S' %>>Semestral</option>
+          <option value="T"<%= " selected = 'selected'" if $sancion.tipoMatricula == 'T' %>>Temporal</option>
+          <option value="R"<%= " selected = 'selected'" if $sancion.tipoMatricula == 'R' %>>Remolque</option>
+          <option value="O"<%= " selected = 'selected'" if $sancion.tipoMatricula == 'O' %>>Otra</option>
+        </select>
+      </div>
+      <div>
+        <select name="sancion-tipoVehiculo" id="sancion-tipoVehiculo" data-native-menu="false" data-theme="b" data-mini="true" required data-inline="false">
+          <option value="" data-placeholder="true">Tipo de veh&iacute;culo</option>
+          <% TipoVehiculo.find(:all, :order => [:codVehicul]).each do |tipoVehiculo| %>
+            <option value="<%= tipoVehiculo.codVehicul %>"<%= " selected = 'selected'" if tipoVehiculo.codVehicul == $sancion.tipoVehiculo %>><%= tipoVehiculo.descripcion %></option>
+          <% end %>
+        </select>
+      </div>
+      <div>
+        <select name="sancion-marca" id="sancion-marca" class="filterable-select" data-native-menu="false" data-theme="b" data-mini="true" required data-inline="false">
+          <option value="" data-placeholder="true">Marca</option>
+          <% Marca.find(:all, :order => [:codMarca]).each do |marca| %>
+            <option value="<%= marca.codMarca %>"<%= " selected = 'selected'" if marca.codMarca == $sancion.marca %>><%= marca.marca %></option>
+          <% end %>
+        </select>
+      </div>
+      <div>
+        <input type="text" id="sancion-modelo" name="sancion-modelo" placeholder="Modelo" data-clear-btn="true" data-mini="true" value="<%= $sancion.modelo %>" required maxlength="15">
+        <ul id="sancion-modelo-sugerencias" data-role="listview" data-inset="true"></ul>
+      </div>
+      <div>
+        <select name="sancion-color" id="sancion-color" class="filterable-select" data-native-menu="false" data-theme="b" data-mini="true" required data-inline="false">
+          <option value="" data-placeholder="true">Color</option>
+          <% Color.find(:all, :order => [:codColor]).each do |color| %>
+            <option value="<%= color.codColor %>"<%= " selected = 'selected'" if color.codColor == $sancion.color %>><%= color.color %></option>
+          <% end %>
+        </select>
+      </div>
+      <div>
+        <select name="sancion-codCalle" id="sancion-codCalle" class="filterable-select" data-native-menu="false" data-theme="b" data-mini="true" required data-inline="false">
+          <option value="" data-placeholder="true">Calle</option>
+          <% Calle.find(:all, :order => [:codCalle]).each do |calle| %>
+            <option value="<%= calle.codCalle %>"<%= " selected = 'selected'" if calle.codCalle == $sancion.codCalle %>><%= calle.nombreCalle %></option>
+          <% end %>
+        </select>
+      </div>
+      <div>
+        <input type="text" id="sancion-numero" name="sancion-numero" data-clear-btn="true" placeholder="N&uacute;mero" value="<%= $sancion.numero %>" data-mini="true" required maxlenght="10" />
+      </div>
+      <div>
+        <select name="sancion-codSancion" id="sancion-codSancion" data-native-menu="false" data-mini="true" required data-inline="false">
+          <option value="" data-placeholder="true">Tipo de sanci&oacute;n</option>
+          <% TipoSancion.find(:all, :order => [:codigo]).each do |tipoSancion| %>
+              <option value="<%= tipoSancion.codigo %>"<%= " selected = 'selected'" if tipoSancion.codigo == $sancion.codSancion %>>
+                <%= tipoSancion.descripcionCorta %>
+              </option>
+          <% end %>
+        </select>
+      </div>
+      <div>
+        <input type="submit" value="Confirmar" id="confirmar" data-icon="forward" data-iconpos="left"/>
+      </div>
+    </form>
+    <script>
+      $("#form-sancion").validate({
+        errorPlacement: function (error, element) {
+          error.appendTo(element.parent().parent().after());
+        },
+        submitHandler: function(form) {
+          var valid=false;
+          confirmaDatos(form);
+        }
+      });
+    </script>
+  </div>
+</div>

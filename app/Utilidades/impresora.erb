@@ -1,0 +1,157 @@
+<div data-role="page" id="impresora" data-theme="b">
+  <style>
+    .ui-icon-leftarrowicon:after {
+      background-image: url("/public/images/left_16.png");
+      background-size: 18px 18px
+    }
+    .ui-icon-searchicon:after {
+      background-image: url("/public/images/search_16.png");
+      background-size: 18px 18px
+    }
+    .ui-icon-tickicon:after {
+      background-image: url("/public/images/tick_16.png");
+      background-size: 18px 18px
+    }
+  </style>
+  <script type="text/javascript">
+    var valid=false;
+    var sdCurrentDialogClosed=false;
+    var passwordValida=false;
+    function buscaImpresoras(){
+      var printers = [];
+      Rho.Printer.searchPrinters({ 
+          connectionType:Rho.Printer.CONNECTION_TYPE_BLUETOOTH,  
+          printerType: Rho.Printer.PRINTER_TYPE_ZEBRA
+        }, function (cb){
+          if(cb.status == 'PRINTER_STATUS_SUCCESS'){
+            if (typeof cb.printerID != "undefined"){
+              console.log('Found: ' + cb.printerID)
+            } else {
+              console.log('Done Searching')
+            }
+          } else {
+            console.log(cb.status);
+          }
+        }
+      )
+    }
+    function waitSimpleDialogClose(callback){
+      var condition = function(){return sdCurrentDialogClosed};
+      if (condition() == false) {
+        setTimeout(function(){waitSimpleDialogClose(callback)}, 1000)
+      } else {
+        $(document).trigger('simpledialog', {'method':'close'});
+        callback()
+      }
+    };
+    function pidePasswd(newPasswd) {
+      var passwd = '';
+      valid = false;
+      sdCurrentDialogClosed = false;
+      $('#impresora').simpledialog2({
+        mode: 'button',
+        headerText: 'Selecci&oacute;n de impresora',
+        headerClose: false,
+        buttonPrompt: '&iquest;Contrase&ntilde;a?',
+        buttonInput: true,
+        buttonPassword: true,
+        forceInput: true,
+        buttons : {
+          'Aceptar': {
+            click: function () { 
+              passwd = $.mobile.sdLastInput;
+              valid = true
+              if (passwd != newPasswd) {
+                alert("Password no v&aacute;lida");
+                valid=false
+              }
+            }
+          },
+          'Cancelar': {
+            click: function () {
+              valid = false
+            },
+            icon: "delete",
+            theme: "c"
+          }
+        },
+        zindex: 1000,
+        callbackClose: function() {
+          sdCurrentDialogClosed = true
+        }
+      })
+    };
+    function passwdOk() {
+      if (!valid) {
+        $('#atras').click()
+      };
+      passwordValida=true
+    };
+    function checkPasswd(newPasswd) {
+      pidePasswd(newPasswd);
+      waitSimpleDialogClose(function() {passwdOk()});
+    };
+    function pideConformidad() {
+      valid = false;
+      sdCurrentDialogClosed = false;
+      $('#confirmar').simpledialog2({
+        mode: 'button',
+        headerText: 'Impresora',
+        headerClose: false,
+        buttonPrompt: '&iquest;Datos correctos?',
+        forceInput: true,
+        buttons : {
+          'Si': {
+            click: function () {
+              valid = true
+            }
+          },
+          'No': {
+            click: function () {
+              valid = false
+            },
+            icon: "delete",
+            theme: "c"
+          }
+        },
+        zindex: 2000,
+        callbackClose: function () {
+          sdCurrentDialogClosed = true
+        }
+      })
+    };
+    function datosOk(form) {
+      if (valid){
+        form.submit()
+      }
+    };
+    function confirmaDatos(form) {
+      pideConformidad();
+      waitSimpleDialogClose(function() {datosOk(form)});
+    };
+    $('#impresora').on('pageshow', function(){
+      if (('<%= @password %>' != '') && (!passwordValida)) {
+        checkPasswd('<%= @password %>')
+      };
+    })
+  </script>
+  <div data-role="header" data-position="inline">
+    <h1>Impresora</h1>
+    <a href="<%= url_for(:action => :index) %>" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-leftarrowicon" data-direction="reverse" id="atras">
+      Cancelar
+    </a>
+  </div>
+  <div data-role="content">
+    <div>
+      <div class="itemLabel">
+        Impresora actual:
+      </div>
+      <div class="itemValue" style="text-align: right; width: 50%">
+        <%= @impresoraNombre %>
+      </div>
+      <a href="#" onclick="buscaImpresoras()" data-role="button"  data-icon="searchicon" data-iconpos="left">Buscar impresoras</a> 
+    </div>
+    <div id="listaImpresoras">
+    </div>
+  </div>
+</div>

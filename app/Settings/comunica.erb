@@ -1,0 +1,56 @@
+<div data-role="page" data-theme="b">
+  <script type="text/javascript">
+    function ponDatos(mensaje, numeroTabla, nombreTabla, numeroRegistro) {
+      $('#msg').text(mensaje);
+      $('#numeroTabla').text(numeroTabla);
+      $('#nombreTabla').text(nombreTabla);
+      $('#numeroRegistro').text(numeroRegistro);
+    }
+  </script>
+  <div data-role="header" data-position="inline">
+    <h1>Comunicaci&oacute;n</h1>
+  </div>
+
+  <div data-role="content">
+    <ul data-role="listview">
+      <li id="msg" class="error-message" style="display:none">
+        mensaje
+      </li>
+      <li>
+        <div class="itemLabel">
+          <span>
+            N&uacute;mero de ficheros:
+          </span>
+        </div>
+        <div class="itemValue">
+          <span id="numeroTabla">
+            &nbsp
+          </span>
+        </div>
+      </li>
+      <li>
+        <div class="itemLabel">
+          <span>
+            Fichero:
+          </span>
+        </div>
+        <div class="itemValue">
+          <span id="nombreTabla">
+            &nbsp
+          </span>
+        </div>
+      </li>
+      <li>
+        <div class="itemLabel">
+          <span>
+            Registro:
+          </span>
+        </div>
+        <div class="itemValue">
+          <span id="numeroRegistro">
+          </span>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

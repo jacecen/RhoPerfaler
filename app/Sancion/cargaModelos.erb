@@ -1,0 +1,4 @@
+<option value="" data-placeholder="true">Seleccione el modelo</option>
+<% @modelos.each do |modelos| %>
+  <option value="<%= modelo.modelo %>"<%= " selected = 'selected'" if modelo.modelo == $sancion.modelo %>><%= modelo.modelo %></option>
+<% end %>

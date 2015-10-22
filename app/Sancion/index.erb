@@ -1,0 +1,70 @@
+<div data-role="page" data-theme="b">
+  <style>
+    .ui-icon-homeicon:after {
+      background-image: url("/public/images/home_16.png");
+      background-size: 18px 18px;
+    }
+    .ui-icon-plusicon:after {
+      background-image: url("/public/images/plus_16.png");
+      background-size: 18px 18px;
+    }
+    .ui-icon-minusicon:after {
+      background-image: url("/public/images/minus_16.png");
+      background-size: 18px 18px;
+    }
+    .ui-icon-searchicon:after {
+      background-image: url("/public/images/search_16.png");
+      background-size: 18px 18px;
+    }
+  </style>
+	<div data-role="header" data-position="inline">
+    <h1>Sanciones</h1>
+    <a href="<%= Rho::Application.startURI %>" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-homeicon" data-direction="reverse">
+      Volver
+    </a>
+    <a href="<%= url_for(:action => :new) %>" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-plusicon">
+      Nueva
+    </a>
+	</div>
+  <div data-role="content">
+    <ul data-role="listview">
+      <% @sanciones.each do |sancion| %>
+          <li>
+            <a href="<%= url_for(:action => :show, :id => sancion.object) %>">
+              <div class="itemLabel" style="float: left; width: 25%">
+                Matr&iacute;cula:
+              </div>
+              <div class="itemValue" style="float:none">
+                <%= sancion.matricula %>
+              </div>
+              <p class="ui-li-aside">
+                <strong>
+                  <%= sancion.fechaHora %>
+                </strong>
+              </p>
+              <br/>
+              <div class="itemValue" style="width: 100%">
+                <%= sancion.direccion %>
+              </div>
+            </a>
+          </li>
+      <% end %>
+      <li>
+        <% if @pagina == "indexAll" %>
+          <a class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-minusicon" style="text-align: center" href="<%= url_for(:action => :index)%>">
+            Mostrar 10 &uacute;ltimas
+          </a>
+        <% else %>
+          <a class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-plusicon" style="text-align: center" href="<%= url_for(:action => :indexAll)%>">
+            Mostrar todo
+          </a>
+        <% end %>
+      </li>
+      <li>
+        <a class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-searchicon" style="text-align: center" href="<%= url_for(:action => :search)%>">
+          Buscar
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>

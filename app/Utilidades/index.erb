@@ -1,0 +1,42 @@
+<div data-role="page" data-theme="b">
+  <style>
+    .ui-icon-homeicon:after {
+      background-image: url("/public/images/home_16.png");
+      background-size: 18px 18px;
+    }
+  </style>
+  <div data-role="header" data-position="inline">
+    <h1>Utilidades</h1>
+    <a href="<%= Rho::Application.startURI %>" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-homeicon" data-direction="reverse">
+      Volver
+    </a>
+  </div>
+  <div data-role="content">
+    <ul data-role="listview">
+      <li>
+        <a href="<%= url_for(:action => :parametros) %>">
+          <img src="/public/images/gear_64.png" style="margin:8px"/>
+          Parametros
+        </a>
+      </li>
+      <li>
+        <a href="<%= url_for(:action => :impresora) %>">
+          <img src="/public/images/print_64.png" style="margin:8px"/>
+          Selecci&oacute;n de impresora
+        </a>
+      </li>
+      <li>
+        <a href="<%= url_for(:action => :password) %>">
+          <img src="/public/images/key_64.png" style="margin:8px"/>
+          Cambio de password
+        </a>
+      </li>
+      <li>
+        <a href="<%= url_for(:action => :parametrosComunica) %>">
+          <img src="/public/images/globe_64.png" style="margin:8px"/>
+          Configuraci&oacute;n comunicaciones
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>

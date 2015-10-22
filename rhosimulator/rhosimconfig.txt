@@ -1,0 +1,9 @@
+rhodes_path='C:/RhoMobileSuite5.2.2/ruby/lib/ruby/gems/1.9.1/gems/rhodes-5.2.2'
+app_version='1.0'
+app_name='RhoPerfaler'
+reload_app_changes=0
+debug_port=
+debug_host='127.0.0.1'
+platform='android'
+os_version='2.3.3'
+ext_path=C:/RhoMobileSuite5.2.2/ruby/lib/ruby/gems/1.9.1/gems/rhodes-5.2.2/lib/commonAPI/coreapi;C:/RhoMobileSuite5.2.2/ruby/lib/ruby/gems/1.9.1/gems/rhodes-5.2.2/lib/extensions/json;C:/RhoMobileSuite5.2.2/ruby/lib/ruby/gems/1.9.1/gems/rhodes-translator-0.0.4/lib;C:/RhoMobileSuite5.2.2/ruby/lib/ruby/gems/1.9.1/gems/rhoconnect-client-5.2.2/lib/../ext/rhoconnect-client;C:/RhoMobileSuite5.2.2/ruby/lib/ruby/gems/1.9.1/gems/rhoelements-5.2.2/libs/printing;C:/RhoMobileSuite5.2.2/ruby/lib/ruby/gems/1.9.1/gems/rhoelements-5.2.2/libs/printing_zebra;C:/RhoMobileSuite5.2.2/ruby/lib/ruby/gems/1.9.1/gems/rhoelements-5.2.2/libs/rhoelementsext;C:/RhoMobileSuite5.2.2/ruby/lib/ruby/gems/1.9.1/gems/rhoelements-5.2.2/libs/motoapi;C:/RhoMobileSuite5.2.2/ruby/lib/ruby/gems/1.9.1/gems/rhoelements-5.2.2/libs/symboldevice;C:/RhoMobileSuite5.2.2/ruby/lib/ruby/gems/1.9.1/gems/rhoelements-5.2.2/libs/emdk3-manager;C:/RhoMobileSuite5.2.2/ruby/lib/ruby/gems/1.9.1/gems/rhoelements-5.2.2/libs/signature;C:/RhoMobileSuite5.2.2/ruby/lib/ruby/gems/1.9.1/gems/rhoelements-5.2.2/libs/cardreader;C:/RhoMobileSuite5.2.2/ruby/lib/ruby/gems/1.9.1/gems/rhoelements-5.2.2/libs/hardwarekeys;C:/RhoMobileSuite5.2.2/ruby/lib/ruby/gems/1.9.1/gems/rhodes-5.2.2/lib/commonAPI/sensor;C:/RhoMobileSuite5.2.2/ruby/lib/ruby/gems/1.9.1/gems/rhoelements-5.2.2/libs/barcode;C:/RhoMobileSuite5.2.2/ruby/lib/ruby/gems/1.9.1/gems/rhoelements-5.2.2/libs/indicators;
